@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://siggedaskleine-dot.github.io/elpris/sitemap.xml

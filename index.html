@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Billigaste timmen – när är elen billigast idag?</title>
 <meta name="description" content="Se elpriset idag och imorgon i SE1, SE2, SE3 och SE4. Vi räknar ut när det är billigast att köra disken, tvätta eller ladda elbilen.">
+<link rel="canonical" href="https://siggedaskleine-dot.github.io/elpris/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Billigaste timmen – när är elen billigast idag?">
+<meta property="og:description" content="Elpriset timme för timme, och när det lönar sig att diska, tvätta eller ladda elbilen.">
+<meta property="og:locale" content="sv_SE">
 <style>
   :root {
     --bg: #f6f7f4; --card: #ffffff; --text: #1b1f1d; --muted: #5f6b66;
@@ -99,6 +104,28 @@
     <a href="#" id="ctaLink" rel="sponsored noopener">Jämför elavtal</a>
   </div>
 
+  <div class="card">
+    <h2>Vanliga frågor om elpriset</h2>
+    <h3 style="font-size:1rem;margin:12px 0 4px">När är elen billigast?</h3>
+    <p style="margin:0" class="muted">Oftast på natten och mitt på dagen när det blåser eller solen skiner. Dyrast brukar det vara på morgonen kl 7–9 och på kvällen kl 17–20, när många lagar mat och kommer hem.</p>
+    <h3 style="font-size:1rem;margin:12px 0 4px">När kommer morgondagens elpris?</h3>
+    <p style="margin:0" class="muted">Nord Pool publicerar morgondagens priser runt kl 13 varje dag. Då visas de här under "Imorgon".</p>
+    <h3 style="font-size:1rem;margin:12px 0 4px">Vilket elområde bor jag i?</h3>
+    <p style="margin:0" class="muted">SE1 är norra Norrland, SE2 södra Norrland, SE3 Svealand och norra Götaland, och SE4 Skåne och södra Götaland. Ditt elområde står på elräkningen.</p>
+    <h3 style="font-size:1rem;margin:12px 0 4px">Är det här vad jag betalar?</h3>
+    <p style="margin:0" class="muted">Det är spotpriset. Med ett timprisavtal betalar du det plus elbolagets påslag, energiskatt och elnätsavgift. Med fast eller rörligt månadspris påverkar timpriset dig mindre.</p>
+  </div>
+
+  <nav class="card" aria-label="Elområden">
+    <h2>Elpris per elområde</h2>
+    <div class="row">
+      <a href="/elpris/se1/">Elpris SE1 Luleå</a> ·
+      <a href="/elpris/se2/">Elpris SE2 Sundsvall</a> ·
+      <a href="/elpris/se3/">Elpris SE3 Stockholm</a> ·
+      <a href="/elpris/se4/">Elpris SE4 Malmö</a>
+    </div>
+  </nav>
+
   <footer>
     <p>Priserna är spotpriser från Nord Pool via <a href="https://www.elprisetjustnu.se">Elpriset just nu.se</a>, utan elnätsavgift, energiskatt och elbolagets påslag. Sidan kan innehålla annonslänkar.</p>
   </footer>
@@ -111,11 +138,12 @@ const TASKS = [
   { name: "Tvätta", hours: 2, kwh: 1.5 },
   { name: "Ladda elbilen", hours: 4, kwh: 30 },
 ];
-const state = { area: "SE3", vat: true, day: 0, data: { 0: null, 1: null } };
+const PAGE_AREA = document.documentElement.dataset.area; // satt på områdessidorna
+const state = { area: PAGE_AREA || "SE3", vat: true, day: 0, data: { 0: null, 1: null } };
 
 try {
   const saved = JSON.parse(localStorage.getItem("elpris") || "{}");
-  if (saved.area) state.area = saved.area;
+  if (saved.area && !PAGE_AREA) state.area = saved.area;
   if (typeof saved.vat === "boolean") state.vat = saved.vat;
 } catch (e) {}
 

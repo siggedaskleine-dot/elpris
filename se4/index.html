@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="sv" data-area="SE4">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elpris idag SE4 Malmö – billigaste timmen idag och imorgon</title>
+<meta name="description" content="Elpriset idag och imorgon i elområde SE4 (Malmö) timme för timme. Se när det är billigast att diska, tvätta och ladda elbilen.">
+<link rel="canonical" href="https://siggedaskleine-dot.github.io/elpris/se4/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Elpris idag SE4 Malmö – billigaste timmen idag och imorgon">
+<meta property="og:description" content="Elpriset timme för timme, och när det lönar sig att diska, tvätta eller ladda elbilen.">
+<meta property="og:locale" content="sv_SE">
+<style>
+  :root {
+    --bg: #f6f7f4; --card: #ffffff; --text: #1b1f1d; --muted: #5f6b66;
+    --line: #e2e6e3; --accent: #0e7a4f; --accent-soft: #dff2e9;
+    --cheap: #2e9e6a; --mid: #e0a52a; --dear: #d9534f; --now: #1b1f1d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121614; --card: #1b201e; --text: #eef2f0; --muted: #9aa8a2;
+      --line: #2c3431; --accent: #4cc790; --accent-soft: #1e3a2d; --now: #eef2f0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
+  header h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  header p { margin: 0 0 16px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px; margin-bottom: 16px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .seg button { border: 1px solid var(--line); background: var(--card); color: var(--text);
+    padding: 8px 14px; border-radius: 999px; font: inherit; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  label.toggle { margin-left: auto; color: var(--muted); font-size: .9rem; cursor: pointer; }
+  .now { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .now .big { font-size: 2.6rem; font-weight: 700; }
+  .badge { padding: 3px 10px; border-radius: 999px; font-size: .85rem; font-weight: 600; color: #fff; }
+  .muted { color: var(--muted); }
+  h2 { font-size: 1.15rem; margin: 0 0 12px; }
+  .tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .tip { border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .tip b { display: block; font-size: 1.05rem; }
+  .tip .when { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+  .chart { display: flex; align-items: flex-end; gap: 2px; height: 180px; margin-top: 8px; }
+  .bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+  .bar.current { outline: 2px solid var(--now); outline-offset: 1px; }
+  .axis { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-top: 4px; }
+  .stats { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; font-size: .9rem; }
+  .cta { background: var(--accent-soft); border-color: transparent; }
+  .cta a { display: inline-block; margin-top: 8px; background: var(--accent); color: #fff;
+    padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: 600; }
+  footer { font-size: .8rem; color: var(--muted); }
+  footer a { color: inherit; }
+  .error { color: var(--dear); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Elpris idag i SE4 Malmö</h1>
+    <p>Elpriset timme för timme idag och imorgon, och när det lönar sig att köra disk, tvätt eller ladda bilen.</p>
+  </header>
+
+  <div class="card">
+    <div class="row">
+      <div class="seg row" id="areas" role="group" aria-label="Elområde">
+        <button data-area="SE1">SE1 Luleå</button>
+        <button data-area="SE2">SE2 Sundsvall</button>
+        <button data-area="SE3">SE3 Stockholm</button>
+        <button data-area="SE4">SE4 Malmö</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="muted" style="font-size:.9rem">Osäker på elområde? Det står på din elräkning.</span>
+      <label class="toggle"><input type="checkbox" id="vat" checked> Inkl. moms</label>
+    </div>
+  </div>
+
+  <div class="card" id="nowCard"><span class="muted">Hämtar elpriser…</span></div>
+
+  <div class="card">
+    <h2>Bästa tiden att…</h2>
+    <div class="tips" id="tips"></div>
+    <p class="muted" style="font-size:.85rem;margin:10px 0 0">Räknat på de kommande timmarna. Morgondagens priser kommer runt kl 13.</p>
+  </div>
+
+  <div class="card">
+    <div class="row"><h2 style="margin:0">Elpris per timme</h2>
+      <div class="seg row" id="days" style="margin-left:auto">
+        <button data-day="0" aria-pressed="true">Idag</button>
+        <button data-day="1">Imorgon</button>
+      </div>
+    </div>
+    <div id="chartWrap"></div>
+  </div>
+
+  <div class="card cta">
+    <h2>Betalar du för mycket för elen?</h2>
+    <p style="margin:0">Med ett timprisavtal betalar du det pris du ser här, och kan spara genom att flytta förbrukning till billiga timmar.</p>
+    <!-- TODO: byt till affiliate-länk när programmet är godkänt -->
+    <a href="#" id="ctaLink" rel="sponsored noopener">Jämför elavtal</a>
+  </div>
+
+  <div class="card">
+    <h2>Vanliga frågor om elpriset</h2>
+    <h3 style="font-size:1rem;margin:12px 0 4px">När är elen billigast?</h3>
+    <p style="margin:0" class="muted">Oftast på natten och mitt på dagen när det blåser eller solen skiner. Dyrast brukar det vara på morgonen kl 7–9 och på kvällen kl 17–20, när många lagar mat och kommer hem.</p>
+    <h3 style="font-size:1rem;margin:12px 0 4px">När kommer morgondagens elpris?</h3>
+    <p style="margin:0" class="muted">Nord Pool publicerar morgondagens priser runt kl 13 varje dag. Då visas de här under "Imorgon".</p>
+    <h3 style="font-size:1rem;margin:12px 0 4px">Vilket elområde bor jag i?</h3>
+    <p style="margin:0" class="muted">SE1 är norra Norrland, SE2 södra Norrland, SE3 Svealand och norra Götaland, och SE4 Skåne och södra Götaland. Ditt elområde står på elräkningen.</p>
+    <h3 style="font-size:1rem;margin:12px 0 4px">Är det här vad jag betalar?</h3>
+    <p style="margin:0" class="muted">Det är spotpriset. Med ett timprisavtal betalar du det plus elbolagets påslag, energiskatt och elnätsavgift. Med fast eller rörligt månadspris påverkar timpriset dig mindre.</p>
+  </div>
+
+  <nav class="card" aria-label="Elområden">
+    <h2>Elpris per elområde</h2>
+    <div class="row">
+      <a href="/elpris/se1/">Elpris SE1 Luleå</a> ·
+      <a href="/elpris/se2/">Elpris SE2 Sundsvall</a> ·
+      <a href="/elpris/se3/">Elpris SE3 Stockholm</a> ·
+      <a href="/elpris/se4/">Elpris SE4 Malmö</a>
+    </div>
+  </nav>
+
+  <footer>
+    <p>Priserna är spotpriser från Nord Pool via <a href="https://www.elprisetjustnu.se">Elpriset just nu.se</a>, utan elnätsavgift, energiskatt och elbolagets påslag. Sidan kan innehålla annonslänkar.</p>
+  </footer>
+</main>
+
+<script>
+const TZ = "Europe/Stockholm";
+const TASKS = [
+  { name: "Köra diskmaskinen", hours: 2, kwh: 1.0 },
+  { name: "Tvätta", hours: 2, kwh: 1.5 },
+  { name: "Ladda elbilen", hours: 4, kwh: 30 },
+];
+const PAGE_AREA = document.documentElement.dataset.area; // satt på områdessidorna
+const state = { area: PAGE_AREA || "SE3", vat: true, day: 0, data: { 0: null, 1: null } };
+
+try {
+  const saved = JSON.parse(localStorage.getItem("elpris") || "{}");
+  if (saved.area && !PAGE_AREA) state.area = saved.area;
+  if (typeof saved.vat === "boolean") state.vat = saved.vat;
+} catch (e) {}
+
+function save() {
+  try { localStorage.setItem("elpris", JSON.stringify({ area: state.area, vat: state.vat })); } catch (e) {}
+}
+
+function stockholmDate(offsetDays) {
+  const d = new Date(Date.now() + offsetDays * 864e5);
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" })
+    .formatToParts(d).map(x => [x.type, x.value]));
+  return { y: p.year, m: p.month, d: p.day };
+}
+
+async function fetchDay(offset) {
+  const { y, m, d } = stockholmDate(offset);
+  const res = await fetch(`https://www.elprisetjustnu.se/api/v1/prices/${y}/${m}-${d}_${state.area}.json`);
+  if (!res.ok) return null; // morgondagens priser finns inte än
+  return (await res.json()).map(p => ({
+    start: new Date(p.time_start), end: new Date(p.time_end), sek: p.SEK_per_kWh,
+  }));
+}
+
+const ore = sek => Math.round(sek * 100 * (state.vat ? 1.25 : 1));
+const hm = d => d.toLocaleTimeString("sv-SE", { timeZone: TZ, hour: "2-digit", minute: "2-digit" });
+const dayName = d => {
+  const today = stockholmDate(0).d;
+  const dd = d.toLocaleDateString("sv-SE", { timeZone: TZ, day: "2-digit" });
+  return dd === today ? "idag" : "imorgon";
+};
+
+// Slå ihop kvartspriser till timpriser för diagrammet
+function hourly(slots) {
+  const map = new Map();
+  for (const s of slots) {
+    const key = s.start.toLocaleString("sv-SE", { timeZone: TZ, hour: "2-digit" });
+    if (!map.has(key)) map.set(key, { start: s.start, sum: 0, n: 0 });
+    const h = map.get(key); h.sum += s.sek; h.n++;
+  }
+  return [...map.values()].map(h => ({ start: h.start, end: new Date(h.start.getTime() + 36e5), sek: h.sum / h.n }));
+}
+
+function colorFor(sek, min, max) {
+  const t = max === min ? 0 : (sek - min) / (max - min);
+  return t < 0.33 ? "var(--cheap)" : t < 0.66 ? "var(--mid)" : "var(--dear)";
+}
+
+function cheapestWindow(slots, hours) {
+  if (!slots.length) return null;
+  const slotMs = slots[0].end - slots[0].start;
+  const n = Math.round(hours * 36e5 / slotMs);
+  if (slots.length < n) return null;
+  let best = null;
+  for (let i = 0; i + n <= slots.length; i++) {
+    let sum = 0;
+    for (let j = i; j < i + n; j++) sum += slots[j].sek;
+    if (!best || sum < best.sum) best = { i, sum };
+  }
+  return { start: slots[best.i].start, end: slots[best.i + n - 1].end, avg: best.sum / n };
+}
+
+function render() {
+  document.querySelectorAll("#areas button").forEach(b => b.setAttribute("aria-pressed", b.dataset.area === state.area));
+  document.querySelectorAll("#days button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.day === state.day));
+  document.getElementById("vat").checked = state.vat;
+
+  const today = state.data[0], tomorrow = state.data[1];
+  const nowCard = document.getElementById("nowCard");
+  if (!today) { nowCard.innerHTML = '<span class="error">Kunde inte hämta elpriser just nu. Försök igen om en stund.</span>'; return; }
+
+  const now = Date.now();
+  const all = [...today, ...(tomorrow || [])];
+  const cur = all.find(s => s.start <= now && now < s.end) || today[0];
+  const todayMin = Math.min(...today.map(s => s.sek)), todayMax = Math.max(...today.map(s => s.sek));
+  const avg = today.reduce((a, s) => a + s.sek, 0) / today.length;
+  const label = cur.sek <= avg * 0.85 ? ["Billigt just nu", "var(--cheap)"]
+    : cur.sek >= avg * 1.15 ? ["Dyrt just nu", "var(--dear)"] : ["Normalt pris", "var(--mid)"];
+  nowCard.innerHTML = `
+    <div class="muted">Just nu i ${state.area} (${hm(cur.start)}–${hm(cur.end)})</div>
+    <div class="now"><span class="big">${ore(cur.sek)} öre/kWh</span>
+      <span class="badge" style="background:${label[1]}">${label[0]}</span></div>
+    <div class="muted">Dagens snitt ${ore(avg)} öre · lägst ${ore(todayMin)} · högst ${ore(todayMax)}</div>`;
+
+  const upcoming = all.filter(s => s.end > now);
+  document.getElementById("tips").innerHTML = TASKS.map(t => {
+    const w = cheapestWindow(upcoming, t.hours);
+    if (!w) return "";
+    const saving = (cur.sek - w.avg) * t.kwh * (state.vat ? 1.25 : 1);
+    return `<div class="tip"><b>${t.name}</b>
+      <div class="when">${dayName(w.start)} ${hm(w.start)}</div>
+      <div class="muted">Snitt ${ore(w.avg)} öre/kWh i ${t.hours} h${saving > 0.05 ? ` · ca ${saving.toFixed(saving < 1 ? 2 : 0).replace(".", ",")} kr billigare än nu` : ""}</div></div>`;
+  }).join("");
+
+  const wrap = document.getElementById("chartWrap");
+  const slots = state.data[state.day];
+  if (!slots) { wrap.innerHTML = '<p class="muted">Morgondagens priser publiceras runt kl 13. Titta in igen då!</p>'; return; }
+  const hours = hourly(slots);
+  const min = Math.min(...hours.map(h => h.sek)), max = Math.max(...hours.map(h => h.sek));
+  const top = Math.max(max, 0.01);
+  wrap.innerHTML = `<div class="chart">${hours.map(h => {
+      const isNow = h.start <= now && now < h.end;
+      return `<div class="bar${isNow ? " current" : ""}" title="${hm(h.start)}: ${ore(h.sek)} öre/kWh"
+        style="height:${Math.max(2, h.sek / top * 100)}%;background:${colorFor(h.sek, min, max)}"></div>`;
+    }).join("")}</div>
+    <div class="axis"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+    <div class="stats"><span>Billigast ${hm(hours.find(h => h.sek === min).start)} (${ore(min)} öre)</span>
+      <span>Dyrast ${hm(hours.find(h => h.sek === max).start)} (${ore(max)} öre)</span></div>`;
+}
+
+async function load() {
+  document.getElementById("nowCard").innerHTML = '<span class="muted">Hämtar elpriser…</span>';
+  try {
+    const [a, b] = await Promise.all([fetchDay(0), fetchDay(1).catch(() => null)]);
+    state.data = { 0: a, 1: b };
+  } catch (e) { state.data = { 0: null, 1: null }; }
+  render();
+}
+
+document.getElementById("areas").addEventListener("click", e => {
+  const a = e.target.dataset.area; if (!a) return;
+  state.area = a; save(); load();
+});
+document.getElementById("days").addEventListener("click", e => {
+  const d = e.target.dataset.day; if (d === undefined) return;
+  state.day = +d; render();
+});
+document.getElementById("vat").addEventListener("change", e => { state.vat = e.target.checked; save(); render(); });
+
+load();
+setInterval(render, 60e3);
+</script>
+</body>
+</html>
